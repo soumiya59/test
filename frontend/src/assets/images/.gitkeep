@@ -1,0 +1,3 @@
+# Images pour import dans les composants React
+# Utilisation: import image from '../assets/images/nom-image.jpg'
+

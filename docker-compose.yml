@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cooking_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: cooking_db
+      MYSQL_USER: cooking_user
+      MYSQL_PASSWORD: cooking_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cooking_network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-proot_password",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cooking_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_NAME: CookingRecipes
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: cooking_db
+      DB_USERNAME: cooking_user
+      DB_PASSWORD: cooking_password
+    networks:
+      - cooking_network
+    command: >
+      sh -c "sleep 10 &&
+             composer install --no-interaction &&
+             php artisan key:generate --force &&
+             php artisan migrate --force &&
+             php artisan db:seed --force &&
+             php artisan serve --host=0.0.0.0 --port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cooking_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: /api
+      REACT_APP_BACKEND_URL: http://backend:8000
+    networks:
+      - cooking_network
+    command: npm start
+
+networks:
+  cooking_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
