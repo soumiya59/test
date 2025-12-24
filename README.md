@@ -228,15 +228,3 @@ docker-compose down -v
 docker-compose up --build
 ```
 
-## 📄 Licence
-
-Ce projet est fourni à des fins éducatives et de démonstration.
-
-## 👤 Auteur
-
-Développé dans le cadre d'un projet de gestion de recettes de cuisine.
-
----
-
-**Bon appétit ! 🍽️**
-

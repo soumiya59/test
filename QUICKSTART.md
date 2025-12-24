@@ -43,9 +43,4 @@ docker-compose logs frontend
 docker-compose logs mysql
 ```
 
-## Notes importantes
-
-1. Le premier démarrage peut prendre 5-10 minutes (installation des dépendances)
-2. Attendez que MySQL soit complètement démarré avant que le backend ne se connecte
-3. Les données de démonstration sont chargées automatiquement au premier démarrage
 
