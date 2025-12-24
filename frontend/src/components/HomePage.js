@@ -20,6 +20,7 @@ import strawberryImg from '../assets/images/foods/strawberry.png';
 import theBestImg from '../assets/images/foods/the best.png';
 import theCreamiestImg from '../assets/images/foods/the creamiest.png';
 import heroImg from '../assets/images/foods/hero.jpeg';
+import Header from './Header';
 
 // Use /api which will be proxied to backend
 const API_URL = process.env.REACT_APP_API_URL || '/api';
@@ -124,6 +125,7 @@ const HomePage = () => {
 
   return (
     <>
+    <Header />
       {/* Hero Section */}
         <section className="relative py-16 mb-16 bg-white">
           <div className="container px-5 mx-auto max-w-7xl">

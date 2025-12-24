@@ -28,7 +28,7 @@ class RecipeSeeder extends Seeder
                 'cook_time' => 45,
                 'servings' => 4,
                 'difficulty' => 'easy',
-                'category' => 'Chicken',
+                'category' => 'Meat',
                 'image_url' => 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=800'
             ],
             [
@@ -49,7 +49,7 @@ class RecipeSeeder extends Seeder
                 'cook_time' => 10,
                 'servings' => 1,
                 'difficulty' => 'easy',
-                'category' => 'Snack',
+                'category' => 'Meat',
                 'image_url' => 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800'
             ],
             [
@@ -70,7 +70,7 @@ class RecipeSeeder extends Seeder
                 'cook_time' => 15,
                 'servings' => 4,
                 'difficulty' => 'medium',
-                'category' => 'Fish',
+                'category' => 'Healthy',
                 'image_url' => 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800'
             ],
             [
@@ -139,26 +139,26 @@ class RecipeSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=800'
             ],
             [
-                'title' => 'Fruity Pancake with Orange & Blueberry',
-                'description' => 'Light and fluffy pancakes topped with fresh oranges and blueberries',
+                'title' => 'Chocolate Lava Cake with Vanilla Ice Cream',
+                'description' => 'Decadent warm chocolate cake with a molten center, served with vanilla ice cream',
                 'ingredients' => [
-                    '1 cup flour',
-                    '1 cup milk',
-                    '1 egg',
-                    '2 tbsp sugar',
-                    '1 tsp baking powder',
-                    '1 orange',
-                    '1/2 cup blueberries',
-                    'Butter',
-                    'Maple syrup'
+                    '4 oz dark chocolate',
+                    '4 tbsp butter',
+                    '2 eggs',
+                    '2 egg yolks',
+                    '1/4 cup sugar',
+                    '2 tbsp flour',
+                    'Vanilla ice cream',
+                    'Powdered sugar',
+                    'Fresh berries'
                 ],
-                'instructions' => '1. Mix dry ingredients\n2. Whisk wet ingredients\n3. Combine and let rest\n4. Cook pancakes on griddle\n5. Top with orange segments\n6. Add blueberries\n7. Drizzle with syrup',
-                'prep_time' => 10,
-                'cook_time' => 15,
+                'instructions' => '1. Melt chocolate and butter\n2. Whisk eggs, yolks, and sugar\n3. Combine chocolate with egg mixture\n4. Fold in flour\n5. Bake at 425°F for 12 minutes\n6. Serve with ice cream\n7. Dust with powdered sugar',
+                'prep_time' => 15,
+                'cook_time' => 12,
                 'servings' => 4,
-                'difficulty' => 'easy',
-                'category' => 'Sweet',
-                'image_url' => 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800'
+                'difficulty' => 'medium',
+                'category' => 'Chocolate',
+                'image_url' => 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800'
             ],
             [
                 'title' => 'The Best Easy One Pot Chicken and Rice',
@@ -178,29 +178,30 @@ class RecipeSeeder extends Seeder
                 'cook_time' => 30,
                 'servings' => 4,
                 'difficulty' => 'easy',
-                'category' => 'Snack',
+                'category' => 'Lunch',
                 'image_url' => 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800'
             ],
             [
-                'title' => 'The Creamiest Creamy Chicken and Bacon Pasta',
-                'description' => 'Indulgent pasta with creamy sauce, tender chicken, and crispy bacon',
+                'title' => 'Classic New York Cheesecake',
+                'description' => 'Creamy and rich cheesecake with a graham cracker crust, perfect for any occasion',
                 'ingredients' => [
-                    '1 lb pasta',
-                    '2 chicken breasts',
-                    '6 slices bacon',
-                    '1 cup heavy cream',
-                    '1/2 cup parmesan',
-                    '2 cloves garlic',
-                    'Fresh basil',
-                    'Salt and pepper'
+                    '2 lbs cream cheese',
+                    '1 cup sugar',
+                    '3 eggs',
+                    '1 cup sour cream',
+                    '1 tsp vanilla extract',
+                    'Graham cracker crumbs',
+                    'Butter',
+                    'Fresh berries',
+                    'Whipped cream'
                 ],
-                'instructions' => '1. Cook pasta according to package\n2. Cook bacon until crispy\n3. Cook chicken in bacon fat\n4. Make cream sauce\n5. Add parmesan to sauce\n6. Toss pasta with sauce\n7. Top with bacon and basil',
-                'prep_time' => 15,
-                'cook_time' => 20,
-                'servings' => 4,
+                'instructions' => '1. Make graham cracker crust\n2. Beat cream cheese until smooth\n3. Add sugar and eggs\n4. Mix in sour cream and vanilla\n5. Pour into crust\n6. Bake at 325°F for 55 minutes\n7. Cool and refrigerate\n8. Serve with berries and whipped cream',
+                'prep_time' => 20,
+                'cook_time' => 55,
+                'servings' => 12,
                 'difficulty' => 'medium',
-                'category' => 'Noodles',
-                'image_url' => 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800'
+                'category' => 'Dessert',
+                'image_url' => 'https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=800'
             ]
         ];
 

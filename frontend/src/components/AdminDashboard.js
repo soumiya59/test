@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../App.css';
+import Header from './Header';
 
 const API_URL = process.env.REACT_APP_API_URL || '/api';
 
@@ -152,7 +153,9 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container">
+    <>  
+      <Header />
+    <div className='container'>
       <div className="admin-container">
         <div className="admin-header">
           <h1 className="admin-title">Dashboard Admin</h1>
@@ -388,6 +391,7 @@ const AdminDashboard = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

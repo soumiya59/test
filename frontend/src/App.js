@@ -13,7 +13,6 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!isRecipeDetail && <Header />}
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<HomePage />} />
