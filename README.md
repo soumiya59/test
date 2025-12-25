@@ -223,26 +223,3 @@ docker-compose down -v
 docker-compose up --build
 ```
 
-## 📸 Screenshots
-
-### Page d'accueil
-
-![Homepage](/frontend/src/assets/images/screenshots/home.png)
-_Page d'accueil avec la liste des recettes et les catégories_
-
-### Liste des recettes
-
-![Recipe List](/frontend/src/assets/images/screenshots/recipes.png)
-_Page de liste des recettes avec recherche et filtres_
-
-### Détails d'une recette
-
-![Recipe Detail](/frontend/src/assets/images/screenshots/detail.png)
-_Vue détaillée d'une recette avec ingrédients et instructions_
-
-### Dashboard Admin
-
-![Admin Dashboard](screenshots/dashboard.png)
-_Interface d'administration pour gérer les recettes_
-
-

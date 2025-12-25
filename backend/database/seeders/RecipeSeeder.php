@@ -11,7 +11,7 @@ class RecipeSeeder extends Seeder
     {
         $recipes = [
             [
-                'title' => 'Spicy and delicious chicken wings',
+                'title' => 'Spicy and delicious chicken wings meal',
                 'description' => 'Crispy chicken wings with a spicy kick, perfect for sharing with friends',
                 'ingredients' => [
                     '2 lbs chicken wings',
@@ -210,4 +210,3 @@ class RecipeSeeder extends Seeder
         }
     }
 }
-

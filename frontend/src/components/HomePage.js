@@ -120,7 +120,7 @@ const HomePage = () => {
     <>
     <Header />
       {/* Hero Section */}
-        <section className="relative py-16 mb-16 bg-white">
+        <section className="relative py-16 bg-white">
           <div className="container px-5 mx-auto max-w-7xl">
             <div className="grid items-stretch grid-cols-1 gap-0 lg:grid-cols-2">
               {/* Left Section - Light Mint Green Background with rounded corners */}
@@ -179,7 +179,7 @@ const HomePage = () => {
                           e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="absolute inset-0 hidden items-center justify-center w-10 h-10 text-xs font-bold text-white bg-gray-500 rounded-full">KM</div>
+                      <div className="absolute inset-0 items-center justify-center hidden w-10 h-10 text-xs font-bold text-white bg-gray-500 rounded-full">KM</div>
                     </div>
                     <div>
                       <div className="text-sm font-semibold text-black">Kathryn Murphy</div>
@@ -329,7 +329,7 @@ const HomePage = () => {
 
       <div className="container px-5 mx-auto max-w-7xl">
         {/* Categories Section */}
-        <section className="my-16">
+        <section className="mb-16">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <h2 className="text-4xl font-bold text-black">Categories</h2>
             <button className="px-6 py-3 font-semibold text-black transition-colors bg-[#E7FAFE] rounded-md hover:bg-[#d0f0f5]">
@@ -381,12 +381,10 @@ const HomePage = () => {
         </section>
 
         {/* Simple and Tasty Recipes Section */}
-        <section className="my-16">
+        <section className="">
           <div className="mb-8">
-            <h2 className="mb-2 text-4xl font-bold text-black">Simple and tasty recipes</h2>
-            <p className="max-w-2xl text-base leading-relaxed text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
+            <h2 className="mb-8 text-4xl font-bold text-black">Simple and tasty recipes</h2>
+          
           </div>
           <div className="grid grid-cols-1 gap-8 mt-8 md:grid-cols-2 lg:grid-cols-3">
             {/* First 4 recipes */}
@@ -535,7 +533,7 @@ const HomePage = () => {
         </section>
 
         {/* Instagram Section */}
-        <section className="my-16 text-center">
+        <section className="text-center ">
           <div className="mb-8">
             <h2 className="mb-2 text-4xl font-bold text-black">Check out foodieland on instagram</h2>
             <p className="max-w-2xl mx-auto text-base leading-relaxed text-gray-600">
