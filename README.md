@@ -227,17 +227,17 @@ docker-compose up --build
 
 ### Page d'accueil
 
-![Homepage](screenshots/home.png)
+![Homepage](/frontend/src/assets/images/screenshots/home.png)
 _Page d'accueil avec la liste des recettes et les catégories_
 
 ### Liste des recettes
 
-![Recipe List](screenshots/recipes.png)
+![Recipe List](/frontend/src/assets/images/screenshots/recipes.png)
 _Page de liste des recettes avec recherche et filtres_
 
 ### Détails d'une recette
 
-![Recipe Detail](screenshots/detail.png)
+![Recipe Detail](/frontend/src/assets/images/screenshots/detail.png)
 _Vue détaillée d'une recette avec ingrédients et instructions_
 
 ### Dashboard Admin
