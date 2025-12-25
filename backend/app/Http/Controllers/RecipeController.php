@@ -31,12 +31,57 @@ class RecipeController extends Controller
             $query->where('difficulty', $request->difficulty);
         }
 
-        // Tri
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
+        // Filtre par temps de préparation (min)
+        if ($request->has('min_prep_time') && $request->min_prep_time) {
+            $query->where('prep_time', '>=', (int)$request->min_prep_time);
+        }
+        if ($request->has('max_prep_time') && $request->max_prep_time) {
+            $query->where('prep_time', '<=', (int)$request->max_prep_time);
+        }
 
-        $recipes = $query->get();
+        // Filtre par temps total (prep_time + cook_time)
+        if ($request->has('min_total_time') && $request->min_total_time) {
+            $query->whereRaw('(prep_time + cook_time) >= ?', [(int)$request->min_total_time]);
+        }
+        if ($request->has('max_total_time') && $request->max_total_time) {
+            $query->whereRaw('(prep_time + cook_time) <= ?', [(int)$request->max_total_time]);
+        }
+
+        // Filtre par portions
+        if ($request->has('min_servings') && $request->min_servings) {
+            $query->where('servings', '>=', (int)$request->min_servings);
+        }
+        if ($request->has('max_servings') && $request->max_servings) {
+            $query->where('servings', '<=', (int)$request->max_servings);
+        }
+
+        // Tri
+        $allowedSortFields = ['created_at', 'title', 'prep_time', 'cook_time', 'total_time', 'servings', 'difficulty', 'category'];
+        $sortBy = $request->get('sort_by', 'created_at');
+        
+        // Validate sort field
+        if (!in_array($sortBy, $allowedSortFields)) {
+            $sortBy = 'created_at';
+        }
+
+        $sortOrder = strtolower($request->get('sort_order', 'desc'));
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
+        // Special handling for total time sorting
+        if ($sortBy === 'total_time') {
+            $query->orderByRaw('(prep_time + cook_time) ' . $sortOrder);
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
+        // Pagination
+        $perPage = $request->get('per_page', 12);
+        // Limit per_page to prevent abuse
+        $perPage = min(max((int)$perPage, 1), 100);
+        
+        $recipes = $query->paginate($perPage);
 
         return response()->json($recipes);
     }

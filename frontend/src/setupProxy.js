@@ -13,10 +13,10 @@ module.exports = function(app) {
       secure: false,
       logLevel: 'info',
       onProxyReq: (proxyReq, req, res) => {
-        console.log(`[PROXY] ${req.method} ${req.url} -> ${backendUrl}${req.url}`);
+        // Proxy request
       },
       onError: (err, req, res) => {
-        console.error(`[PROXY ERROR] ${req.url}:`, err.message);
+        // Proxy error
       }
     })
   );

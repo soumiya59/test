@@ -20,7 +20,6 @@ const RecipeDetail = () => {
         setRecipe(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching recipe:', error);
         setLoading(false);
       }
     };
@@ -32,7 +31,7 @@ const RecipeDetail = () => {
         const filtered = response.data.filter(r => r.id !== parseInt(id)).slice(0, 3);
         setOtherRecipes(filtered);
       } catch (error) {
-        console.error('Error fetching other recipes:', error);
+        // Error fetching other recipes
       }
     };
     

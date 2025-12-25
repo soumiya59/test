@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../App.css';
@@ -8,67 +8,165 @@ const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 12,
+    total: 0
+  });
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('');
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const searchTimeoutRef = useRef(null);
+  const searchInputRef = useRef(null);
 
+  // Debounce search term - update debouncedSearchTerm after user stops typing
   useEffect(() => {
-    fetchRecipes();
-    fetchCategories();
-  }, []);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-  useEffect(() => {
-    filterRecipes();
-  }, [searchTerm, categoryFilter, difficultyFilter, recipes]);
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 500ms delay
 
-  const fetchRecipes = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/recipes`);
-      setRecipes(response.data);
-      console.log(response.data);
-      setFilteredRecipes(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-      setLoading(false);
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchTerm]);
+
+  // Track if input should maintain focus
+  const shouldMaintainFocusRef = useRef(false);
+  const cursorPositionRef = useRef(null);
+  const blurTimeoutRef = useRef(null);
+
+  // Store focus state and cursor position before state updates
+  const handleSearchChange = (e) => {
+    const input = e.target;
+    shouldMaintainFocusRef.current = document.activeElement === input;
+    cursorPositionRef.current = input.selectionStart;
+    setSearchTerm(e.target.value);
+  };
+
+  // Track focus events to know when user is actively using the input
+  const handleSearchFocus = () => {
+    shouldMaintainFocusRef.current = true;
+    // Clear any pending blur timeout
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
     }
   };
+
+  const handleSearchBlur = () => {
+    // Delay clearing the flag to allow re-render to restore focus if needed
+    blurTimeoutRef.current = setTimeout(() => {
+      // Only clear if input is still not focused (user clicked away intentionally)
+      if (document.activeElement !== searchInputRef.current) {
+        shouldMaintainFocusRef.current = false;
+      }
+    }, 100);
+  };
+
+  // Restore focus and cursor position after every render if input should maintain focus
+  useLayoutEffect(() => {
+    if (shouldMaintainFocusRef.current && searchInputRef.current) {
+      const input = searchInputRef.current;
+      // Check if input lost focus due to re-render
+      if (document.activeElement !== input) {
+        input.focus();
+        // Restore cursor position
+        if (cursorPositionRef.current !== null && cursorPositionRef.current <= input.value.length) {
+          input.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current);
+        } else if (input.value.length > 0) {
+          // If position is invalid, place cursor at end
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }
+    }
+  });
+
+  const fetchRecipes = useCallback(async (page = 1) => {
+    try {
+      setLoading(true);
+      const params = {
+        page,
+        per_page: 12
+      };
+
+      if (debouncedSearchTerm) {
+        params.search = debouncedSearchTerm;
+      }
+      if (categoryFilter) {
+        params.category = categoryFilter;
+      }
+      if (difficultyFilter) {
+        params.difficulty = difficultyFilter;
+      }
+      if (sortBy) {
+        params.sort_by = sortBy;
+      }
+      if (sortOrder) {
+        params.sort_order = sortOrder;
+      }
+
+      const response = await axios.get(`${API_URL}/recipes`, { params });
+      
+      // Handle paginated response
+      if (response.data.data) {
+        // Laravel pagination format
+        setRecipes(response.data.data);
+        setPagination({
+          current_page: response.data.current_page,
+          last_page: response.data.last_page,
+          per_page: response.data.per_page,
+          total: response.data.total
+        });
+      } else {
+        // Fallback for non-paginated response
+        setRecipes(response.data);
+        setPagination({
+          current_page: 1,
+          last_page: 1,
+          per_page: response.data.length,
+          total: response.data.length
+        });
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  }, [debouncedSearchTerm, categoryFilter, difficultyFilter, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchRecipes(1);
+  }, [fetchRecipes]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${API_URL}/recipes/categories`);
       setCategories(response.data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // Error fetching categories
     }
   };
 
-  const filterRecipes = () => {
-    let filtered = [...recipes];
-
-    if (searchTerm) {
-      filtered = filtered.filter(recipe =>
-        recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        recipe.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (categoryFilter) {
-      filtered = filtered.filter(recipe => recipe.category === categoryFilter);
-    }
-
-    if (difficultyFilter) {
-      filtered = filtered.filter(recipe => recipe.difficulty === difficultyFilter);
-    }
-
-    setFilteredRecipes(filtered);
+  const handlePageChange = (page) => {
+    fetchRecipes(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const displayRecipes = filteredRecipes;
 
   if (loading) {
     return (
@@ -102,15 +200,21 @@ const RecipeList = () => {
                 </svg>
               </div>
               <input
+                ref={searchInputRef}
                 type="text"
                 className="w-full py-4 pl-12 pr-4 text-gray-700 placeholder-gray-400 transition-colors duration-200 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-black"
                 placeholder="Search recipes by name or description..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
               />
               {searchTerm && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setDebouncedSearchTerm('');
+                  }}
                   className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors hover:text-gray-600"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,15 +274,68 @@ const RecipeList = () => {
                     </svg>
                   </div>
                 </div>
+
+                {/* Sort By */}
+                <div className="relative flex-1 min-w-[200px] md:flex-initial">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+                    </svg>
+                  </div>
+                  <select
+                    className="w-full py-3 pl-12 pr-10 text-gray-700 transition-colors duration-200 bg-white border-2 border-gray-200 appearance-none cursor-pointer rounded-xl focus:outline-none focus:border-black"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="created_at">Sort by Date</option>
+                    <option value="title">Sort by Title</option>
+                    <option value="prep_time">Sort by Prep Time</option>
+                    <option value="cook_time">Sort by Cook Time</option>
+                    <option value="total_time">Sort by Total Time</option>
+                    <option value="servings">Sort by Servings</option>
+                    <option value="difficulty">Sort by Difficulty</option>
+                    <option value="category">Sort by Category</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Sort Order */}
+                <div className="relative flex-1 min-w-[150px] md:flex-initial">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                  </div>
+                  <select
+                    className="w-full py-3 pl-12 pr-10 text-gray-700 transition-colors duration-200 bg-white border-2 border-gray-200 appearance-none cursor-pointer rounded-xl focus:outline-none focus:border-black"
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                  >
+                    <option value="desc">Descending</option>
+                    <option value="asc">Ascending</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               {/* Clear Filters Button */}
-              {(searchTerm || categoryFilter || difficultyFilter) && (
+              {(searchTerm || categoryFilter || difficultyFilter || sortBy !== 'created_at' || sortOrder !== 'desc') && (
                 <button
                   onClick={() => {
                     setSearchTerm('');
+                    setDebouncedSearchTerm('');
                     setCategoryFilter('');
                     setDifficultyFilter('');
+                    setSortBy('created_at');
+                    setSortOrder('desc');
                   }}
                   className="flex items-center gap-2 px-6 py-3 text-sm font-semibold text-gray-700 transition-colors duration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
                 >
@@ -191,14 +348,17 @@ const RecipeList = () => {
             </div>
 
             {/* Active Filters Display */}
-            {(searchTerm || categoryFilter || difficultyFilter) && (
+            {(searchTerm || categoryFilter || difficultyFilter || sortBy !== 'created_at' || sortOrder !== 'desc') && (
               <div className="flex flex-wrap items-center gap-2 mt-4">
                 <span className="text-sm font-medium text-gray-600">Active filters:</span>
                 {searchTerm && (
                   <span className="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-black bg-[#E8F5F4] rounded-full">
                     Search: "{searchTerm}"
                     <button
-                      onClick={() => setSearchTerm('')}
+                      onClick={() => {
+                        setSearchTerm('');
+                        setDebouncedSearchTerm('');
+                      }}
                       className="text-gray-600 hover:text-black"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,18 +393,35 @@ const RecipeList = () => {
                     </button>
                   </span>
                 )}
+                {sortBy !== 'created_at' && (
+                  <span className="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-black bg-[#E8F5F4] rounded-full">
+                    Sort: {sortBy.replace('_', ' ')} ({sortOrder})
+                    <button
+                      onClick={() => {
+                        setSortBy('created_at');
+                        setSortOrder('desc');
+                      }}
+                      className="text-gray-600 hover:text-black"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </span>
+                )}
               </div>
             )}
           </div>
 
-          {displayRecipes.length === 0 ? (
+          {recipes.length === 0 ? (
             <div className="empty-state">
               <h3>No recipes found</h3>
               <p>Try adjusting your search criteria</p>
             </div>
           ) : (
-            <div className="recipes-grid">
-              {displayRecipes.map(recipe => (
+            <>
+              <div className="recipes-grid">
+                {recipes.map(recipe => (
                 <div
                   key={recipe.id}
                   className="recipe-card"
@@ -280,8 +457,85 @@ const RecipeList = () => {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {pagination.last_page > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-12 mb-8">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => handlePageChange(pagination.current_page - 1)}
+                    disabled={pagination.current_page === 1}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                      pagination.current_page === 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-black border-2 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => {
+                    // Show first page, last page, current page, and pages around current
+                    if (
+                      page === 1 ||
+                      page === pagination.last_page ||
+                      (page >= pagination.current_page - 1 && page <= pagination.current_page + 1)
+                    ) {
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                            page === pagination.current_page
+                              ? 'bg-black text-white'
+                              : 'bg-white text-black border-2 border-gray-200 hover:bg-gray-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    } else if (
+                      page === pagination.current_page - 2 ||
+                      page === pagination.current_page + 2
+                    ) {
+                      return (
+                        <span key={page} className="px-2 text-gray-400">
+                          ...
+                        </span>
+                      );
+                    }
+                    return null;
+                  })}
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handlePageChange(pagination.current_page + 1)}
+                    disabled={pagination.current_page === pagination.last_page}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                      pagination.current_page === pagination.last_page
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-black border-2 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {/* Results Info */}
+              <div className="text-center text-sm text-gray-600 mb-4">
+                Showing {((pagination.current_page - 1) * pagination.per_page) + 1} to{' '}
+                {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of{' '}
+                {pagination.total} recipes
+              </div>
+            </>
           )}
         </section>
       </div>

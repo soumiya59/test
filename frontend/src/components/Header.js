@@ -28,7 +28,7 @@ const Header = () => {
           {/* Navigation Links - Centered */}
           <nav className="flex justify-center gap-8 items-center flex-wrap">
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Home</Link>
-            <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Recipes</Link>
+            <Link to="/recipes" className="text-black font-medium hover:text-primary transition-colors text-sm">Recipes</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Blog</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Contact</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">About us</Link>
@@ -59,7 +59,7 @@ const Header = () => {
           </Link>
           <nav className="flex justify-center gap-4 flex-wrap">
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Home</Link>
-            <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Recipes</Link>
+            <Link to="/recipes" className="text-black font-medium hover:text-primary transition-colors text-sm">Recipes</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Blog</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">Contact</Link>
             <Link to="/" className="text-black font-medium hover:text-primary transition-colors text-sm">About us</Link>

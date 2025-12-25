@@ -32,11 +32,14 @@ const AdminDashboard = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`${API_URL}/recipes`);
-      setRecipes(response.data);
+      const response = await axios.get(`${API_URL}/recipes`, {
+        params: { per_page: 100 } // Get all recipes for admin dashboard
+      });
+      // Handle paginated or non-paginated response
+      const recipesData = response.data.data || response.data;
+      setRecipes(recipesData);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching recipes:', error);
       setLoading(false);
     }
   };
@@ -46,7 +49,7 @@ const AdminDashboard = () => {
       const response = await axios.get(`${API_URL}/recipes/categories`);
       setCategories(response.data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // Error fetching categories
     }
   };
 
@@ -118,7 +121,6 @@ const AdminDashboard = () => {
       fetchRecipes();
       handleCloseModal();
     } catch (error) {
-      console.error('Error saving recipe:', error);
       alert('Erreur lors de la sauvegarde de la recette');
     }
   };
@@ -129,7 +131,6 @@ const AdminDashboard = () => {
         await axios.delete(`${API_URL}/recipes/${id}`);
         fetchRecipes();
       } catch (error) {
-        console.error('Error deleting recipe:', error);
         alert('Erreur lors de la suppression de la recette');
       }
     }
@@ -351,18 +352,16 @@ const AdminDashboard = () => {
 
                   <div className="form-group">
                     <label className="form-label">Catégorie</label>
-                    <input
-                      type="text"
-                      className="form-input"
+                    <select
+                      className="form-select"
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      list="categories"
-                    />
-                    <datalist id="categories">
+                    >
+                      <option value="">Sélectionner une catégorie</option>
                       {categories.map(cat => (
-                        <option key={cat} value={cat} />
+                        <option key={cat} value={cat}>{cat}</option>
                       ))}
-                    </datalist>
+                    </select>
                   </div>
                 </div>
 

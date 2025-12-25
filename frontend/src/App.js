@@ -4,12 +4,14 @@ import HomePage from './components/HomePage';
 import RecipeList from './components/RecipeList';
 import RecipeDetail from './components/RecipeDetail';
 import AdminDashboard from './components/AdminDashboard';
+import NotFound from './components/NotFound';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
 function AppContent() {
   const location = useLocation();
   const isRecipeDetail = location.pathname.startsWith('/recipe/');
+  const isAdmin = location.pathname.startsWith('/admin');
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -19,9 +21,10 @@ function AppContent() {
           <Route path="/recipes" element={<RecipeList />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isRecipeDetail && <Footer />}
+      {!isRecipeDetail && !isAdmin && <Footer />}
     </div>
   );
 }

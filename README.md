@@ -56,6 +56,7 @@ Application web complète pour la gestion de recettes de cuisine avec interface 
    ```
 
    Cette commande va :
+
    - Construire les images Docker pour le frontend et le backend
    - Démarrer les conteneurs MySQL, Laravel et React
    - Installer les dépendances
@@ -77,6 +78,7 @@ Application web complète pour la gestion de recettes de cuisine avec interface 
 ### Interface Utilisateur
 
 1. **Page d'accueil** (`http://localhost:3000`)
+
    - Visualiser toutes les recettes
    - Utiliser la barre de recherche
    - Filtrer par catégorie ou difficulté
@@ -91,12 +93,14 @@ Application web complète pour la gestion de recettes de cuisine avec interface 
 1. **Accéder au dashboard** (`http://localhost:3000/admin`)
 
 2. **Ajouter une recette**
+
    - Cliquer sur "Ajouter une recette"
    - Remplir le formulaire
    - Ajouter des ingrédients un par un
    - Cliquer sur "Créer"
 
 3. **Modifier une recette**
+
    - Cliquer sur "Modifier" sur une recette existante
    - Modifier les champs souhaités
    - Cliquer sur "Modifier"
@@ -192,15 +196,6 @@ Les variables d'environnement sont configurées dans `docker-compose.yml`. Pour 
 - **Password**: cooking_password
 - **Root Password**: root_password
 
-## 📝 Données de Démonstration
-
-L'application est préchargée avec 5 recettes de démonstration :
-- Spaghetti Carbonara
-- Salade César
-- Bœuf Bourguignon
-- Tacos Mexicains
-- Sushi Rolls
-
 ## 🐛 Dépannage
 
 ### Le backend ne démarre pas
@@ -227,4 +222,32 @@ L'application est préchargée avec 5 recettes de démonstration :
 docker-compose down -v
 docker-compose up --build
 ```
+
+## 📸 Screenshots
+
+### Page d'accueil
+
+![Homepage](screenshots/homepage.png)
+_Page d'accueil avec la liste des recettes et les catégories_
+
+### Liste des recettes
+
+![Recipe List](screenshots/recipe-list.png)
+_Page de liste des recettes avec recherche et filtres_
+
+### Détails d'une recette
+
+![Recipe Detail](screenshots/recipe-detail.png)
+_Vue détaillée d'une recette avec ingrédients et instructions_
+
+### Dashboard Admin
+
+![Admin Dashboard](screenshots/admin-dashboard.png)
+_Interface d'administration pour gérer les recettes_
+
+### Formulaire d'ajout de recette
+
+![Add Recipe](screenshots/add-recipe.png)
+_Formulaire pour créer une nouvelle recette_
+
 
