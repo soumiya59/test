@@ -227,27 +227,22 @@ docker-compose up --build
 
 ### Page d'accueil
 
-![Homepage](screenshots/homepage.png)
+![Homepage](screenshots/home.png)
 _Page d'accueil avec la liste des recettes et les catégories_
 
 ### Liste des recettes
 
-![Recipe List](screenshots/recipe-list.png)
+![Recipe List](screenshots/recipes.png)
 _Page de liste des recettes avec recherche et filtres_
 
 ### Détails d'une recette
 
-![Recipe Detail](screenshots/recipe-detail.png)
+![Recipe Detail](screenshots/detail.png)
 _Vue détaillée d'une recette avec ingrédients et instructions_
 
 ### Dashboard Admin
 
-![Admin Dashboard](screenshots/admin-dashboard.png)
+![Admin Dashboard](screenshots/dashboard.png)
 _Interface d'administration pour gérer les recettes_
-
-### Formulaire d'ajout de recette
-
-![Add Recipe](screenshots/add-recipe.png)
-_Formulaire pour créer une nouvelle recette_
 
 
